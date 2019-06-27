@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="Service Desk">4fe67f8fc0a80164000a00fde5904c3e</application>
+        <assessment/>
+        <content_page/>
+        <device_type/>
+        <filter/>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>DIRECT</link_type>
+        <map_page/>
+        <mobile_title>Twilio Flex Workspace</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name/>
+        <order>-1000</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>cab/?id=twilio_flex_workspace</query>
+        <report/>
+        <roles/>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-06-27 21:19:25</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>e2ab7be9db1233006a0f924bdb961976</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Twilio Flex Workspace</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
+        <sys_update_name>sys_app_module_e2ab7be9db1233006a0f924bdb961976</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-06-27 21:19:25</sys_updated_on>
+        <timeline_page/>
+        <title>Twilio Flex Workspace</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name>_blank</window_name>
+    </sys_app_module>
+</record_update>
