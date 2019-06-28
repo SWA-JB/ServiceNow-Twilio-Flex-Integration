@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties_category_m2m">
+    <sys_properties_category_m2m action="INSERT_OR_UPDATE">
+        <category display_value="Twilio Flex">065e2b3ddb5a33006a0f924bdb9619ed</category>
+        <order>100</order>
+        <property display_value="x_8725_servicenow.twilio.flex.runtime" name="x_8725_servicenow.twilio.flex.runtime">d4eab769db1233006a0f924bdb961966</property>
+        <sys_class_name>sys_properties_category_m2m</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-06-28 14:59:42</sys_created_on>
+        <sys_id>c07e6f3ddb5a33006a0f924bdb961995</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_8725_servicenow.twilio.flex.runtime.Twilio Flex</sys_name>
+        <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
+        <sys_update_name>sys_properties_category_m2m_c07e6f3ddb5a33006a0f924bdb961995</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-06-28 14:59:42</sys_updated_on>
+    </sys_properties_category_m2m>
+</record_update>
