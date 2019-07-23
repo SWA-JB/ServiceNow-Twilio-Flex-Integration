@@ -34,6 +34,7 @@
 			var inc_gr = new GlideRecord('incident');
 			inc_gr.addEncodedQuery('caller_id='+user_gr.sys_id+'^active=true');
 			inc_gr.query();
+			body.num_tickets = inc_gr.getRowCount();
 			while(inc_gr.next())
 				{
 				var ticket = {};
@@ -41,7 +42,8 @@
 					ticket.short_description = inc_gr.short_description.getDisplayValue();
 					ticket.state = inc_gr.state.getDisplayValue();
 					ticket.priority = inc_gr.priority.getDisplayValue();
-					ticket.last_comment = inc_gr.comments.getJournalEntry(-1);
+					if(ticket.state == 'On Hold')
+						ticket.last_comment = inc_gr.comments.getJournalEntry(1).toString().split('(Additional comments)')[1].trim();
 					tickets.push(ticket);
 				}
 				body.tickets = tickets;
@@ -69,14 +71,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-06-27 21:14:26</sys_created_on>
         <sys_id>698ab369db1233006a0f924bdb961940</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>Find User From Phone</sys_name>
         <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
         <sys_update_name>sys_ws_operation_698ab369db1233006a0f924bdb961940</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-23 15:34:23</sys_updated_on>
+        <sys_updated_on>2019-07-23 22:14:03</sys_updated_on>
         <web_service_definition display_value="Twilio Flex">017a7369db1233006a0f924bdb961940</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
