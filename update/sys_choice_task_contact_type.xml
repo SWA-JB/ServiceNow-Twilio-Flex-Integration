@@ -120,7 +120,7 @@
             <sys_class_name>sys_choice_set</sys_class_name>
             <sys_created_by>system</sys_created_by>
             <sys_created_on>2019-01-18 00:14:18</sys_created_on>
-            <sys_id>7e493bf1db9a33006a0f924bdb961959</sys_id>
+            <sys_id>dd774ba5db3233003380eb41ca9619c9</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>contact_type</sys_name>
             <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
