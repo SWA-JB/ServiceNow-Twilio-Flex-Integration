@@ -11,41 +11,76 @@
 	response.setContentType('application/json');
 	response.setStatus(200);
 	var body ={};
-	
-	var requestBody = request.queryParams;
-	var phase_2 = JSON.parse(JSON.stringify(requestBody.WorkerAttributes));
-	var work_att = JSON.parse(phase_2);
-	var phase_3 = JSON.parse(JSON.stringify(requestBody.TaskAttributes));
-	var task_att = JSON.parse(phase_3);
-	
-	if(requestBody.EventType =="reservation.accepted")
-		{
-		var user_gr = new GlideRecord('sys_user');
-		user_gr.get('email',work_att.email);
 		
-		var inc_gr = new GlideRecord('incident');
-		inc_gr.initialize();
+		var requestBody = request.queryParams;
+		var phase_2 = JSON.parse(JSON.stringify(requestBody.WorkerAttributes));
+		var work_att = JSON.parse(phase_2);
+		var phase_3 = JSON.parse(JSON.stringify(requestBody.TaskAttributes));
+		var task_att = JSON.parse(phase_3);
 		
-		inc_gr.assigned_to = user_gr.sys_id;
-		inc_gr.contact_type = 'twilio_flex';
-		inc_gr.caller_id = task_att.user_sys_id.toString().trim();
-		inc_gr.correlation_id = task_att.call_sid.toString().trim();
-		inc_gr.insert();
-	}
-	else if(requestBody.EventType =="task.completed")
-		{
+		if(requestBody.EventType =="reservation.accepted" && task_att.ticket_number && task_att.ticket_number.toString().trim() !='')
+			{
+			var user_gr = new GlideRecord('sys_user');
+			user_gr.get('email',work_att.email);
+			
 			var inc_gr = new GlideRecord('incident');
-			inc_gr.addQuery('correlation_id','CONTAINS',task_att.call_sid.toString().trim());
+			inc_gr.addQuery('number',task_att.ticket_number.toString().trim());
 			inc_gr.query();
 			
 			if(inc_gr.next())
 				{
-					inc_gr.correlation_id = inc_gr.correlation_id+", call_completed";
-					inc_gr.update();
-				}
+				inc_gr.correlation_id = inc_gr.correlation_id+", twilio_assigned_to: "+user_gr.sys_id;
+				inc_gr.update();
+			}
 		}
-	response.setBody(body);
-})(request, response);]]></operation_script>
+		else if(requestBody.EventType =="reservation.accepted")
+			{
+			var user_gr = new GlideRecord('sys_user');
+			user_gr.get('email',work_att.email);
+			
+			var inc_gr = new GlideRecord('incident');
+			inc_gr.initialize();
+			
+			inc_gr.assigned_to = user_gr.sys_id;
+			inc_gr.contact_type = 'twilio_flex';
+			inc_gr.caller_id = task_att.user_sys_id.toString().trim();
+			inc_gr.correlation_id = requestBody.TaskSid.toString().trim();
+			inc_gr.insert();
+		}
+		else if(requestBody.EventType =="task.completed" && task_att.ticket_number && task_att.ticket_number.toString().trim() !='')
+			{
+			var user_gr = new GlideRecord('sys_user');
+			user_gr.get('email',work_att.email);
+			
+			var inc_gr = new GlideRecord('incident');
+			inc_gr.addQuery('number',task_att.ticket_number.toString().trim());
+			inc_gr.query();
+			
+			if(inc_gr.next())
+				{
+				inc_gr.correlation_id = inc_gr.correlation_id+", call_completed";
+				inc_gr.correlation_id = inc_gr.correlation_id.replace(", twilio_assigned_to: "+user_gr.sys_id, "");
+				inc_gr.update();
+			}
+		}
+		else if(requestBody.EventType =="task.completed")
+			{
+			var user_gr = new GlideRecord('sys_user');
+			user_gr.get('email',work_att.email);
+			
+			var inc_gr = new GlideRecord('incident');
+			inc_gr.addQuery('correlation_id','CONTAINS',requestBody.TaskSid.toString().trim());
+			inc_gr.query();
+			
+			if(inc_gr.next())
+				{
+				inc_gr.correlation_id = inc_gr.correlation_id+", call_completed";
+				inc_gr.correlation_id = inc_gr.correlation_id.replace(", twilio_assigned_to: "+user_gr.sys_id, "");
+				inc_gr.update();
+			}
+		}
+		response.setBody(body);
+	})(request, response);]]></operation_script>
         <operation_uri>/api/x_8725_servicenow/twilio_flex/status</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
@@ -59,14 +94,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-06-27 21:15:12</sys_created_on>
         <sys_id>62aab729db1233006a0f924bdb9619c0</sys_id>
-        <sys_mod_count>8</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>Task Router Status Change</sys_name>
         <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
         <sys_update_name>sys_ws_operation_62aab729db1233006a0f924bdb9619c0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-25 14:53:52</sys_updated_on>
+        <sys_updated_on>2019-07-26 18:05:18</sys_updated_on>
         <web_service_definition display_value="Twilio Flex">017a7369db1233006a0f924bdb961940</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
