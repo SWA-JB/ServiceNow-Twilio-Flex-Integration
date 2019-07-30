@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
     <sys_ws_operation action="INSERT_OR_UPDATE">
         <active>true</active>
-        <consumes>application/x-www-form-urlencoded</consumes>
+        <consumes>application/json,application/xml,text/xml</consumes>
         <consumes_customized>true</consumes_customized>
         <default_operation_uri/>
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
@@ -12,7 +12,8 @@
 	response.setStatus(200);
 	var body ={};
 		
-		var requestBody = request.queryParams;
+		//parse worker and task attributes out from Twilio data
+		var requestBody = request.body.data;
 		var phase_2 = JSON.parse(JSON.stringify(requestBody.WorkerAttributes));
 		var work_att = JSON.parse(phase_2);
 		var phase_3 = JSON.parse(JSON.stringify(requestBody.TaskAttributes));
@@ -20,9 +21,13 @@
 		
 		if(requestBody.EventType =="reservation.accepted" && task_att.ticket_number && task_att.ticket_number.toString().trim() !='')
 			{
+			//This case is when a reservation is accepted and the caller is asking about an existing ticket. In this use case we want to popup the existing ticket instead of creating a new one
+			
+			//lookup user from worker email address coming from Twilio
 			var user_gr = new GlideRecord('sys_user');
 			user_gr.get('email',work_att.email);
 			
+			//lookup ticket using ticket number coming from Twilio
 			var inc_gr = new GlideRecord('incident');
 			inc_gr.addQuery('number',task_att.ticket_number.toString().trim());
 			inc_gr.query();
@@ -35,9 +40,13 @@
 		}
 		else if(requestBody.EventType =="reservation.accepted")
 			{
+			//This case is when a reservation is accepted and the caller is wanting to report a new issue
+			
+			//lookup user from worker email address coming from Twilio
 			var user_gr = new GlideRecord('sys_user');
 			user_gr.get('email',work_att.email);
 			
+			//create new incident with the caller as the person making the phone call and the assigned to being the worker from Twilio
 			var inc_gr = new GlideRecord('incident');
 			inc_gr.initialize();
 			
@@ -49,9 +58,13 @@
 		}
 		else if(requestBody.EventType =="task.completed" && task_att.ticket_number && task_att.ticket_number.toString().trim() !='')
 			{
+			//This case is when a reservation is completed and the caller is asking about an existing ticket.
+			
+			//lookup user from worker email address coming from Twilio
 			var user_gr = new GlideRecord('sys_user');
 			user_gr.get('email',work_att.email);
 			
+			//lookup ticket using ticket number coming from Twilio
 			var inc_gr = new GlideRecord('incident');
 			inc_gr.addQuery('number',task_att.ticket_number.toString().trim());
 			inc_gr.query();
@@ -65,9 +78,13 @@
 		}
 		else if(requestBody.EventType =="task.completed")
 			{
+			//This case is when a reservation is completed and the caller is wanting to report a new issue
+			
+			//lookup user from worker email address coming from Twilio
 			var user_gr = new GlideRecord('sys_user');
 			user_gr.get('email',work_att.email);
 			
+			//lookup ticket using ticket number coming from Twilio
 			var inc_gr = new GlideRecord('incident');
 			inc_gr.addQuery('correlation_id','CONTAINS',requestBody.TaskSid.toString().trim());
 			inc_gr.query();
@@ -94,14 +111,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-06-27 21:15:12</sys_created_on>
         <sys_id>62aab729db1233006a0f924bdb9619c0</sys_id>
-        <sys_mod_count>16</sys_mod_count>
+        <sys_mod_count>25</sys_mod_count>
         <sys_name>Task Router Status Change</sys_name>
         <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
         <sys_update_name>sys_ws_operation_62aab729db1233006a0f924bdb9619c0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-26 18:05:18</sys_updated_on>
+        <sys_updated_on>2019-07-30 22:28:15</sys_updated_on>
         <web_service_definition display_value="Twilio Flex">017a7369db1233006a0f924bdb961940</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
