@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>true</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>POST</http_method>
+        <name>Task Status Change Event</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+  response.setContentType("application/json");
+  response.setStatus(200);
+  var body = {};
+
+  //parse worker, task, and eventType data out from Twilio data
+  var requestBody = request.body.data;
+  var workerEmail = requestBody.worker.email;
+  var task = requestBody.task;
+  var eventType = requestBody.eventType;
+
+  switch (eventType) {
+    case "accept_task":
+      if (task.attributes.ticket_number && task.attributes.ticket_number.toString().trim() != "") {
+        //This case is when a reservation is accepted and the caller is asking about an existing ticket. In this use case we want to popup the existing ticket instead of creating a new one
+
+        //lookup user from worker email address coming from Twilio
+        var user_gr = new GlideRecord("sys_user");
+        user_gr.get("email", workerEmail);
+
+        //lookup ticket using ticket number coming from Twilio
+        var inc_gr = new GlideRecord("incident");
+        inc_gr.addQuery("number", task.attributes.ticket_number.toString().trim());
+        inc_gr.query();
+
+        if (inc_gr.next()) {
+          inc_gr.correlation_id = inc_gr.correlation_id + ", twilio_assigned_to: " + user_gr.sys_id;
+          inc_gr.update();
+        }
+      } else {
+        //This case is when a reservation is accepted and the caller is wanting to report a new issue
+
+        //lookup user from worker email address coming from Twilio
+        var user_gr = new GlideRecord("sys_user");
+        user_gr.get("email", workerEmail);
+
+        //create new incident with the caller as the person making the phone call and the assigned to being the worker from Twilio
+        var inc_gr = new GlideRecord("incident");
+        inc_gr.initialize();
+        inc_gr.assigned_to = user_gr.sys_id;
+        inc_gr.contact_type = "twilio_flex";
+        inc_gr.caller_id = task.attributes.user_sys_id.toString().trim();
+        inc_gr.correlation_id = task.sid.toString().trim();
+        inc_gr.insert();
+      }
+      break;
+    case "complete_task":
+      if (task.attributes.ticket_number && task.attributes.ticket_number.toString().trim() != "") {
+        //This case is when a reservation is completed and the caller was asking about an existing ticket.
+
+        //lookup user from worker email address coming from Twilio
+        var user_gr = new GlideRecord("sys_user");
+        user_gr.get("email", workerEmail);
+
+        //lookup ticket using ticket number coming from Twilio
+        var inc_gr = new GlideRecord("incident");
+        inc_gr.addQuery("number", task.attributes.ticket_number.toString().trim());
+        inc_gr.query();
+
+        if (inc_gr.next()) {
+          inc_gr.correlation_id = inc_gr.correlation_id + ", call_completed";
+          inc_gr.correlation_id = inc_gr.correlation_id.replace(", twilio_assigned_to: " + user_gr.sys_id, "");
+          inc_gr.update();
+        }
+      } else {
+        //This case is when a reservation is completed and the caller was wanting to report a new issue
+
+        //lookup user from worker email address coming from Twilio
+        var user_gr = new GlideRecord("sys_user");
+        user_gr.get("email", workerEmail);
+
+        //lookup ticket using ticket number coming from Twilio
+        var inc_gr = new GlideRecord("incident");
+        inc_gr.addQuery("correlation_id", "CONTAINS", task.sid.toString().trim());
+        inc_gr.query();
+
+        if (inc_gr.next()) {
+          inc_gr.correlation_id = inc_gr.correlation_id + ", call_completed";
+          inc_gr.correlation_id = inc_gr.correlation_id.replace(", twilio_assigned_to: " + user_gr.sys_id, "");
+          inc_gr.update();
+        }
+      }
+      break;
+  }
+  response.setBody(body);
+})(request, response);
+]]></operation_script>
+        <operation_uri>/api/x_8725_servicenow/twilio_flex/status_v2</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/status_v2</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>true</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>justin.young</sys_created_by>
+        <sys_created_on>2019-08-01 04:11:33</sys_created_on>
+        <sys_id>3cbe1cbcdb43b7003380eb41ca9619d4</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>Task Status Change Event</sys_name>
+        <sys_package display_value="ServiceNow Twilio Integration" source="x_8725_servicenow">10e83fe1db1233006a0f924bdb961947</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow Twilio Integration">10e83fe1db1233006a0f924bdb961947</sys_scope>
+        <sys_update_name>sys_ws_operation_3cbe1cbcdb43b7003380eb41ca9619d4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-02 17:52:08</sys_updated_on>
+        <web_service_definition display_value="Twilio Flex">017a7369db1233006a0f924bdb961940</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>
